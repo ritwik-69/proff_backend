@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-const generateAccessToken = async (userid) => {
+const generateAccessAndRefereshTokens = async (userid) => {
   try {
     const user = await User.findById(userid);
     if (!user) {
@@ -154,7 +154,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $set: {
-        refreshToken: undefined,
+        refreshToken: null,
       },
     },
     {
@@ -256,7 +256,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
       throw new ApiError(400, "All fields are required")
   }
 
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
       req.user?._id,
       {
           $set: {
